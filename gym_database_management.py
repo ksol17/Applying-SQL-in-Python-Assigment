@@ -73,8 +73,31 @@ def delete_workout_session(cursor, session_id):
         print(f"Error deleting workout session: {e}")
 
 
+def get_members_in_age_range(cursor, start_age, end_age):
+    """
+    Retrieves details of members whose ages are between start_age and end_age.
+    """
+    try:
+        # SQL query using BETWEEN
+        query = "SELECT id, name, age FROM Members WHERE age BETWEEN %s AND %s"
+        cursor.execute(query, (start_age, end_age))
+
+        # Fetch all the matching records
+        members = cursor.fetchall()
+
+        # Check if any members are found
+        if members:
+            print(f"Members between ages {start_age} and {end_age}:")
+            for member in members:
+                print(f"ID: {member[0]}, Name: {member[1]}, Age: {member[2]}")
+        else:
+            print(f"No members found between ages {start_age} and {end_age}.")
+
+    except Exception as e:
+        print(f"Error retrieving members: {e}")
+
+
 # Main function to handle database operations
-# Establishing the connection
 def main(): 
     conn = connect_database()
 
@@ -93,6 +116,9 @@ def main():
 
             # Delete a workout session (Example: session_id 1)
             delete_workout_session(cursor, 3)
+
+            # Get members between ages 25 and 30
+            get_members_in_age_range(cursor, 25, 30)
 
             # Commit the transaction to the database
             conn.commit()
